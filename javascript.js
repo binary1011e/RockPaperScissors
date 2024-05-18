@@ -8,7 +8,8 @@ function getComputerChoice() {
         return "Scissors";
     }
 }
-
+let playerWins = 0;
+let computerWins = 0;
 function playRound(playerSelection, computerSelection) {
     playerSelection = playerSelection.at(0).toUpperCase() + playerSelection.substring(1).toLowerCase();
     if (playerSelection === "Rock" && computerSelection === "Paper"
@@ -23,38 +24,43 @@ function playRound(playerSelection, computerSelection) {
                 }
     return 1;
 }
+function process(result) {
+    if (result == -1) {
+        computerWins++;
+        return "You lose the round!";
+    } else if (result == 0) {
+        return "You tie the round!"
+    } else {
+        playerWins++;
+        return "You win the round!";
+    }
+}
 function isNumeric(str) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
-
-function playGame() {
-    let numOfTimes = (prompt("How many times do you want to play?"))
-    while (!isNumeric(numOfTimes) || +numOfTimes <= 0) {
-        numOfTimes = prompt("Invalid input! Please enter a valid input")
-    }
-    numofTimes = +numOfTimes;
-    let playerWins = 0;
-    let computerWins = 0;
-    for (let i = 0; i < numOfTimes; i++) {
-        const playerSelection = prompt("What is your pick?");
-        const result = playRound(playerSelection, getComputerChoice());
-        if (result === -100) {
-            i--;
-            alert("Invalid input! Choose again");
-            continue;
-        } else if (result == -1) {
-            alert("You lose the round!");
-            computerWins++;
-        } else if (result == 0) {
-            alert("You tie the round!");
-        } else {
-            alert("You win the round!");
-            playerWins++;
-        }
-        alert(`Current Score: ${playerWins} for the player, ${computerWins} for the computer`);
-    }
+function callRock() {
+    const result = process(playRound("Rock", getComputerChoice()));
+    const display = document.querySelector("div");
+    display.textContent = result + ` Current Score: ${playerWins} for the player, ${computerWins} for the computer`;
+    check();
+}
+function callScissors() {
+    const result = process(playRound("Scissors", getComputerChoice()));
+    const display = document.querySelector("div");
+    display.textContent = result + ` Current Score: ${playerWins} for the player, ${computerWins} for the computer`;
+    check();
+}
+function callPaper() {
+    const result = process(playRound("Paper", getComputerChoice()));
+    const display = document.querySelector("div");
+    display.textContent = result + ` Current Score: ${playerWins} for the player, ${computerWins} for the computer`;
+    check();
+    
+}
+function check() {
+    if (playerWins < 5 && computerWins < 5) return;
     if (playerWins > computerWins) {
         alert(`You win! Score: ${playerWins} to ${computerWins}`);
     } else if (computerWins > playerWins) {
@@ -62,5 +68,23 @@ function playGame() {
     } else {
         alert(`You Tie! Score: ${playerWins} to ${computerWins}`)
     }
+}
+function playGame() {
+    const rock = document.createElement("button");
+    rock.textContent = "Rock";
+    rock.addEventListener("click", callRock);
+    const paper = document.createElement("button");
+    paper.textContent = "Paper";
+    paper.addEventListener("click", callPaper);
+    const scissors = document.createElement("button");
+    scissors.textContent ="Scissors";
+    scissors.addEventListener("click", callScissors);
+    const body = document.querySelector("body");
+    body.appendChild(rock);
+    body.appendChild(paper);
+    body.appendChild(scissors);
+    
+    const display = document.createElement("div");
+    body.appendChild(display);
 }
 playGame();
